@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+       body{background-image: url(mini.jpg);
+       background-size: cover;
+       background-repeat: no-repeat;
+       
+         background-color: hotpink; text-align: center;}
+       input[type=text]{transition: widith 0.4s ease-in-out;}
+       input[type=text]:focus{widith:100%;}
+       form{background-color: #fff;
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 30px 20px;
+      .image{stroke-opacity: inherit;
+
+      }
+      
+   }
+   label{
+      color: red;
+   }
+   button{
+      background-color: red;
+      border-radius: 4px;
+      display: inline-block;
+      font-size: 16px;
+      cursor: pointer;
+      border-bottom-left-radius: 10px;
+      border-top-right-radius: 10px;
+
+
+   }
+   p{color: red; stroke-width: 90px;}
+   
+   
+    </style>
+    
+    <title>form</title>
+    
+</head>
+<body>
+   <h1 style="font-family: 'Times New Roman', Times, serif;background-color: yellow; color: black; font-size-adjust: inherit ;"><strong>
+      THIS IS AN ONLINE SCHOLARSHIP FORM FROM MK FOUNDATION UNDER
+      MINISTY OF EDUCATION AND SPORTS. 
+   </strong></h1><br>
+   <p><em><marquee direction="right"> Fill it carefully</marquee></em></h2>
+   
+    <div class="form-control">
+      <label for="role" id="label-role">Which option best describes you?</label>
+      <select name="role" id="role">
+         <option value="student">student</option>
+         <option value="intern">intern</option>
+         <option value="teacher">teacher</option>
+         <option value="other">other</option>
+         <option value="rather not to tell">rather not to tell</option>
+      </select><br><br>
+   <label for="name">full name</label>
+   <input type="text" id="full name" value="" placeholder="fullname"><br><br>
+   <label for="">Former school</label>
+   <input type="text" id="former school" value="" placeholder="former school"><br> 
+   <br><label for="">emailaddress</label>
+<input type="text" id="email address" value="" placeholder="email"><br> <br>
+<label for="">Location</label>
+<input type="text" id="home address" value="" placeholder="home address"> <br><br>
+<label for="">S4 results</label>
+<input type="text" id="s4 results" value="" placeholder="aggregates">
+<br><br><label for="index">S4 index no</label> 
+<input type="text" id="s4 index no." value="" placeholder="index no.">
+<br><br> 
+<label for="">A level index no.</label>
+<input type="text" id="A level index" value="" placeholder="index">
+ <br><br><label for="k">subject combination</label>
+<input type="text" id="subject combination " value="" placeholder="e.g HEG, HEL, BCM"> <br>
+<p style="color: red;">A level results out?</p>
+<input type="checkbox" id="yes"> 
+<label for="yes">yes</label>
+<input type="checkbox" id="No">
+<label for="No">no</label><br>
+<p style="color: red;"><b>Gender</b></p>
+<input type="checkbox" id="Male">
+<label for="Male">male</label>
+<input type="checkbox" id="Female">
+<label for="Female">Female</label><br><br>
+<label for="university of your choice">University of your choice</label>
+<input type="text" id="university of your choice" value="" placeholder="e.g Busitema university"><br>
+<br><label for="course">Choose a Course</label>
+<input type="text" id="course" value="" placeholder="e.g Bachelors clinical medicine"> 
+<p>Nature of Scholarship (choose "Half" if you have already joined university) </p>
+<input type="checkbox" id="Full">
+<label for="Male">Full</label>
+<input type="checkbox" id="Half">
+<label for="Half">Half</label><br>
+<p>Note: Make a screenshot of your form and send it to the email.</p><br>
+ <button onclick="showMessage()">submit</button>
+ <script>
+   
+ function showMessage(){document.write(
+   "<b><center>Congratulations, Almost done, just 2 steps remaining! you have submited in your application form, <br> Many people fail because they lack guidance from friends from whom they get to know about this organisation.<br> Go back to mkfoundation8@gmail.com for more info, Wish you the best of luck</b>")}</script>
+
+    <p><button><a href="index.html">HOME</a></button></p>
+ </body>
+
+</html>
