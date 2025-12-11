@@ -1,109 +1,667 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-       body{background-image: url(mini.jpg);
-       background-size: cover;
-       background-repeat: no-repeat;
-       
-         background-color: hotpink; text-align: center;}
-       input[type=text]{transition: widith 0.4s ease-in-out;}
-       input[type=text]:focus{widith:100%;}
-       form{background-color: #fff;
-      max-width: 500px;
-      margin: 50px auto;
-      padding: 30px 20px;
-      .image{stroke-opacity: inherit;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Republic of Uganda - Scholarships</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-      }
-      
-   }
-   label{
-      color: red;
-   }
-   button{
-      background-color: red;
-      border-radius: 4px;
-      display: inline-block;
-      font-size: 16px;
+    :root{
+      --primary: #008f8f;
+      --accent: #e25f5c;
+      --muted: #b3e1e1;
+      --bg: #f6f9f9;
+      --card: #ffffff;
+    }
+
+    *{box-sizing:border-box}
+    body {
+      margin: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+      background: var(--bg);
+      color: #222;
+      min-height: 100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Background image with subtle overlay for contrast */
+    .background-image {
+      position: fixed;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=60') center center/cover no-repeat;
+      opacity: 0.10;
+      z-index: 0;
+      pointer-events: none;
+      filter: saturate(0.9);
+    }
+    .background-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.6));
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Top contact & menu bar */
+    .top-bar {
+      background: linear-gradient(90deg, var(--primary), #00bdbd);
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      font-size: 0.98em;
+      z-index: 3;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .top-left {
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .top-left .highlight {
+      color: #fff;
+      font-weight: 700;
+    }
+    .top-actions {
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .icon-btn {
+      color:#fff;
+      font-size:1.1rem;
+      background: rgba(255,255,255,0.06);
+      border-radius:8px;
+      padding:8px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition: background .15s, transform .05s;
+    }
+    .icon-btn:active{ transform:translateY(1px) }
+    .icon-btn:hover{ background: rgba(255,255,255,0.12) }
+
+    /* Logo & Republic Title */
+    .logo-section {
+      background: linear-gradient(90deg, var(--primary), #00bdbd);
+      color: #fff;
+      text-align: center;
+      padding: 28px 16px 18px 16px;
+      border-bottom: 2px solid rgba(179,225,225,0.16);
+      position: relative;
+      z-index: 3;
+    }
+    .logo-wrap {
+      display:flex;
+      align-items:center;
+      gap:18px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .logo-section .logo {
+      height: 92px;
+      width: auto;
+      display:block;
+      border-radius:8px;
+      background: rgba(255,255,255,0.06);
+      padding:6px;
+    }
+    .republic {
+      color: #fff;
+      font-size: 1.05em;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .logo-sub {
+      color: rgba(255,255,255,0.92);
+      font-weight:600;
+      font-size:0.95rem;
+    }
+
+    /* Social sidebar */
+    .social-sidebar {
+      position: fixed;
+      top: 36%;
+      left: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 101;
+    }
+    .social-sidebar .social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      color: #fff;
+      font-size: 1.05em;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      transition: transform .13s, opacity .13s;
+    }
+    .social-sidebar .social:hover { transform: translateX(4px); opacity: .95; }
+    .social.facebook { background: #3b5998; }
+    .social.twitter { background: #1da1f2; }
+    .social.instagram { background: linear-gradient(45deg, #feda75, #fa7e1e 40%, #d62976 80%, #962fbf); }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      margin: 18px 0 0 88px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 8px 14px;
+      font-size: 1rem;
+      border-radius: 6px;
+      letter-spacing: 0.25px;
+      z-index: 3;
+      position: relative;
+    }
+    .breadcrumbs i{ opacity:0.9 }
+
+    /* Scholarships Section */
+    .scholarships-section {
+      background: transparent;
+      padding: 26px 24px 0 24px;
+      display: flex;
+      align-items: center;
+      gap:18px;
+      z-index: 3;
+      position: relative;
+      margin-top: 8px;
+    }
+    .section-label {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      width: 88px;
+      height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    .section-title {
+      font-size: 2.0em;
+      color: #143636;
+      letter-spacing: 1px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    /* Scholarship Form Card */
+    .form-section {
+      background: var(--card);
+      max-width: 720px;
+      margin: 26px auto 52px auto;
+      padding: 28px 26px;
+      border-radius: 14px;
+      box-shadow: 0 12px 40px rgba(9,20,21,0.06);
+      z-index: 3;
+      position: relative;
+      border: 1px solid rgba(10,10,10,0.02);
+    }
+    .form-section h2 {
+      margin-top: 0;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 1.5em;
+    }
+    .intro {
+      color: #3b5b5b;
+      margin-bottom: 12px;
+      font-size: 0.98rem;
+    }
+
+    form .row {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    form label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+      color: #223;
+    }
+    .field {
+      width:100%;
+      margin-bottom: 10px;
+    }
+    .half { width: calc(50% - 6px); min-width: 180px; }
+    .third { width: calc(33.333% - 8px); min-width: 140px; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--muted);
+      border-radius: 8px;
+      font-size: 0.98rem;
+      background: #fbffff;
+      color: #222;
+      outline: none;
+      transition: border-color .12s, box-shadow .12s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 6px 24px rgba(0,139,139,0.06);
+    }
+    textarea{ min-height:120px; resize:vertical; }
+
+    .options {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:8px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    .radio-wrap{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      background: #f7ffff;
+      border: 1px solid rgba(0,0,0,0.04);
+      padding:8px 10px;
+      border-radius:10px;
+    }
+    .radio-wrap input{ transform:scale(1.02); }
+
+    .form-summary {
+      background: #e7f7f7;
+      border-left: 4px solid var(--primary);
+      padding: 12px 12px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: #222;
+      border-radius: 6px;
+      white-space: pre-line;
+    }
+    .summary-actions { display:flex; gap:10px; margin-top:8px; }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
       cursor: pointer;
-      border-bottom-left-radius: 10px;
-      border-top-right-radius: 10px;
+      font-weight:700;
+      transition: background .12s, transform .06s;
+      text-decoration:none;
+    }
+    .btn.secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.03);
+    }
+    .btn:active{ transform: translateY(1px) }
+    .btn.small{ padding:8px 12px; font-weight:600; border-radius:8px; }
 
+    .success-message {
+      background: #e2ffe2;
+      color: #216b2a;
+      border: 1px solid #cfe9cf;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      display:inline-block;
+    }
 
-   }
-   p{color: red; stroke-width: 90px;}
-   
-   
-    </style>
-    
-    <title>form</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6431400192175625"
-     crossorigin="anonymous"></script>
-    
+    /* Footer space */
+    .spacer { height: 60px; }
+
+    @media (max-width: 820px) {
+      .breadcrumbs { margin-left: 12px; font-size:0.95rem; padding:6px 10px; }
+      .scholarships-section { flex-direction:column; align-items:flex-start; padding: 10px 12px; gap:8px; }
+      .section-label{ width:64px; height:64px; font-size:1rem; }
+      .section-title{ font-size:1.2rem }
+      .logo-section .logo { height:68px; }
+      .form-section { margin:18px 16px; padding: 18px; border-radius:12px; }
+      .half{ width:100% }
+      .third{ width:100% }
+      .social-sidebar{ left:6px; top:40% }
+      .top-bar { padding:10px 12px }
+    }
+
+    @media (max-width:420px){
+      .logo-wrap{ gap:10px }
+      .logo-section .logo{ height:56px }
+      .section-label{ width:54px; height:54px }
+      .breadcrumbs{ font-size:0.9rem }
+    }
+  </style>
 </head>
 <body>
-   <h1 style="font-family: 'Times New Roman', Times, serif;background-color: yellow; color: black; font-size-adjust: inherit ;"><strong>
-      THIS IS AN ONLINE SCHOLARSHIP FORM FROM MK FOUNDATION UNDER
-      MINISTY OF EDUCATION AND SPORTS. 
-   </strong></h1><br>
-   <p><em><marquee direction="right"> Fill it carefully</marquee></em></h2>
-   
-    <div class="form-control">
-      <label for="role" id="label-role">Which option best describes you?</label>
-      <select name="role" id="role">
-         <option value="student">student</option>
-         <option value="intern">intern</option>
-         <option value="teacher">teacher</option>
-         <option value="other">other</option>
-         <option value="rather not to tell">rather not to tell</option>
-      </select><br><br>
-   <label for="name">full name</label>
-   <input type="text" id="full name" value="" placeholder="fullname"><br><br>
-   <label for="">Former school</label>
-   <input type="text" id="former school" value="" placeholder="former school"><br> 
-   <br><label for="">emailaddress</label>
-<input type="text" id="email address" value="" placeholder="email"><br> <br>
-<label for="">Location</label>
-<input type="text" id="home address" value="" placeholder="home address"> <br><br>
-<label for="">S4 results</label>
-<input type="text" id="s4 results" value="" placeholder="aggregates">
-<br><br><label for="index">S4 index no</label> 
-<input type="text" id="s4 index no." value="" placeholder="index no.">
-<br><br> 
-<label for="">A level index no.</label>
-<input type="text" id="A level index" value="" placeholder="index">
- <br><br><label for="k">subject combination</label>
-<input type="text" id="subject combination " value="" placeholder="e.g HEG, HEL, BCM"> <br>
-<p style="color: red;">A level results out?</p>
-<input type="checkbox" id="yes"> 
-<label for="yes">yes</label>
-<input type="checkbox" id="No">
-<label for="No">no</label><br>
-<p style="color: red;"><b>Gender</b></p>
-<input type="checkbox" id="Male">
-<label for="Male">male</label>
-<input type="checkbox" id="Female">
-<label for="Female">Female</label><br><br>
-<label for="university of your choice">University of your choice</label>
-<input type="text" id="university of your choice" value="" placeholder="e.g Busitema university"><br>
-<br><label for="course">Choose a Course</label>
-<input type="text" id="course" value="" placeholder="e.g Bachelors clinical medicine"> 
-<p>Nature of Scholarship (choose "Half" if you have already joined university) </p>
-<input type="checkbox" id="Full">
-<label for="Male">Full</label>
-<input type="checkbox" id="Half">
-<label for="Half">Half</label><br>
-<p>Note: Make a screenshot of your form and send it to the email.</p><br>
- <button onclick="showMessage()">submit</button>
- <script>
-   
- function showMessage(){document.write(
-   "<b><center>Congratulations, Almost done, just 2 steps remaining! you have submited in your application form, <br> Many people fail because they lack guidance from friends from whom they get to know about this organisation.<br> Go back to mkfoundation8@gmail.com for more info, Wish you the best of luck</b>")}</script>
+  <div class="background-image" aria-hidden="true"></div>
+  <div class="background-overlay" aria-hidden="true"></div>
 
-    <p><button><a href="index.html">HOME</a></button></p>
- </body>
+  <!-- Top contact bar -->
+  <div class="top-bar" role="banner">
+    <div class="top-left">
+      <span>CALL: <span class="highlight">+256 (0) 41 425 9338</span></span>
+      <span style="opacity:0.9;">Toll Free: <span class="highlight">0800 377 771</span></span>
+    </div>
+    <div class="top-actions" aria-hidden="true">
+      <button class="icon-btn" title="Search" aria-label="Search"><i class="fas fa-search"></i></button>
+      <button class="icon-btn" title="Menu" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
 
+  <!-- Logo & Republic Title -->
+  <div class="logo-section" role="region" aria-label="Uganda Emblem and Title">
+    <div class="logo-wrap">
+      <!-- Local image in ./img/ named "1" (recommended extension: .png or .jpg). 
+           We use img/1.png by default and provide a fallback to the online SVG if the local file is missing. -->
+      <a href="https://en.wikipedia.org/wiki/Coat_of_arms_of_Uganda" target="_blank" rel="noopener" title="Coat of arms of Uganda - online">
+        <img
+          src="img/1.png"
+          srcset="img/1.png 1x, img/1@2x.png 2x"
+          alt="Coat of Arms of Uganda"
+          class="logo"
+          id="ugandaCoat"
+          loading="lazy"
+          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/7/7e/Coat_of_arms_of_Uganda.svg';"
+        />
+      </a>
+      <div>
+        <div class="republic">THE REPUBLIC OF UGANDA</div>
+        <div class="logo-sub">Ministry / Scholarships Office</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Social media sidebar -->
+  <div class="social-sidebar" aria-hidden="false" aria-label="Social media links">
+    <a href="#" class="social facebook" title="Facebook (opens new tab)" aria-label="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" class="social twitter" title="Twitter (opens new tab)" aria-label="Twitter" target="_blank"><i class="fab fa-twitter"></i></a>
+    <a href="#" class="social instagram" title="Instagram (opens new tab)" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+  </div>
+
+  <!-- Breadcrumbs -->
+  <div class="breadcrumbs" aria-label="breadcrumb">
+    <span>HOME</span> <i class="fas fa-caret-right"></i> <span>SCHOLARSHIPS</span>
+  </div>
+
+  <!-- Scholarships heading -->
+  <section class="scholarships-section" aria-hidden="false">
+    <div class="section-label" aria-hidden="true">OUR</div>
+    <h1 class="section-title">SCHOLARSHIPS</h1>
+  </section>
+
+  <!-- Scholarship Application Form -->
+  <section class="form-section" aria-labelledby="formTitle">
+    <h2 id="formTitle">Scholarship Application Form</h2>
+    <div class="intro">Please complete the form below carefully. When you submit, your details will be composed into an email draft addressed to the scholarships office. You can review and send from your email client.</div>
+
+    <form id="scholarshipForm" autocomplete="on" novalidate>
+      <div class="row">
+        <div class="field half">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Full Name" required>
+        </div>
+        <div class="field half">
+          <label for="contact">Contact Number</label>
+          <input type="tel" id="contact" name="contact" placeholder="+256701234567" pattern="^\+?\d{7,15}$" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field half">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="name@example.com" required>
+        </div>
+        <div class="field half">
+          <label for="nationality">Nationality</label>
+          <input type="text" id="nationality" name="nationality" placeholder="Nationality" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="address">Address</label>
+          <input type="text" id="address" name="address" placeholder="Postal / Physical Address" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field third">
+          <label for="educationLevel">Level of Education</label>
+          <select id="educationLevel" name="educationLevel" required>
+            <option value="">Select</option>
+            <option value="Primary">Primary</option>
+            <option value="Secondary">Secondary</option>
+            <option value="Diploma">Diploma</option>
+            <option value="Degree">Degree</option>
+            <option value="Masters">Masters</option>
+            <option value="PhD">PhD</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="field third">
+          <label for="formerSchool">Former School</label>
+          <input type="text" id="formerSchool" name="formerSchool" placeholder="Former School / Institution" required>
+        </div>
+
+        <div class="field third">
+          <label for="performance">Performance / Grades</label>
+          <input type="text" id="performance" name="performance" placeholder="e.g. 8.5 GPA / Division / Grades" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field half">
+          <label for="university">University / Institution of Choice</label>
+          <input type="text" id="university" name="university" placeholder="Institution of Choice" required>
+        </div>
+        <div class="field half">
+          <label for="course">Chosen Course</label>
+          <input type="text" id="course" name="course" placeholder="Chosen Course" required>
+        </div>
+      </div>
+
+      <label>Scholarship Type</label>
+      <div class="options" role="radiogroup" aria-label="Scholarship type">
+        <label class="radio-wrap"><input type="radio" name="scholarshipType" id="full" value="Full" required> Full</label>
+        <label class="radio-wrap"><input type="radio" name="scholarshipType" id="half" value="Half"> Half</label>
+        <label class="radio-wrap"><input type="radio" name="scholarshipType" id="not-specified" value="Not specified"> Not specified</label>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="bioData">Bio Data</label>
+          <input type="text" id="bioData" name="bioData" placeholder="Brief bio data" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="selfDescription">Self Description and Summary</label>
+          <textarea id="selfDescription" name="selfDescription" placeholder="Describe yourself and summarize the above details..." rows="6" required></textarea>
+        </div>
+      </div>
+
+      <div id="formSummary" class="form-summary" style="display:none;" aria-live="polite"></div>
+      <div class="summary-actions" style="display:none;" id="summaryActions">
+        <button type="button" class="btn small secondary" id="copySummary"><i class="fas fa-copy"></i> Copy Summary</button>
+        <button type="button" class="btn small secondary" id="openSummary"><i class="fas fa-eye"></i> View Full Summary</button>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button type="submit" class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> Submit Application</button>
+        <button type="reset" class="btn secondary" id="resetBtn"><i class="fas fa-undo"></i> Reset</button>
+        <div id="successMessage" class="success-message" style="display:none;">Your application has been prepared in your mail client.</div>
+      </div>
+    </form>
+  </section>
+
+  <div class="spacer" aria-hidden="true"></div>
+
+  <script>
+    (function(){
+      const form = document.getElementById('scholarshipForm');
+      const summaryDiv = document.getElementById('formSummary');
+      const successMessage = document.getElementById('successMessage');
+      const summaryActions = document.getElementById('summaryActions');
+      const copyBtn = document.getElementById('copySummary');
+      const openBtn = document.getElementById('openSummary');
+      const submitBtn = document.getElementById('submitBtn');
+
+      function collectData() {
+        const data = {};
+        const f = form;
+        data.name = f.name.value.trim();
+        data.contact = f.contact.value.trim();
+        data.email = f.email.value.trim();
+        data.nationality = f.nationality.value.trim();
+        data.address = f.address.value.trim();
+        data.educationLevel = f.educationLevel.value;
+        data.formerSchool = f.formerSchool.value.trim();
+        data.performance = f.performance.value.trim();
+        data.university = f.university.value.trim();
+        data.course = f.course.value.trim();
+        data.bioData = f.bioData.value.trim();
+        data.selfDescription = f.selfDescription.value.trim();
+        const chosen = f.querySelector('input[name="scholarshipType"]:checked');
+        data.scholarshipType = chosen ? chosen.value : 'Not specified';
+        return data;
+      }
+
+      function composeSummary(data) {
+        return [
+          `Full Name: ${data.name || 'N/A'}`,
+          `Contact: ${data.contact || 'N/A'}`,
+          `Email: ${data.email || 'N/A'}`,
+          `Nationality: ${data.nationality || 'N/A'}`,
+          `Address: ${data.address || 'N/A'}`,
+          `Level of Education: ${data.educationLevel || 'N/A'}`,
+          `Former School: ${data.formerSchool || 'N/A'}`,
+          `Performance/Grades: ${data.performance || 'N/A'}`,
+          `Institution of Choice: ${data.university || 'N/A'}`,
+          `Chosen Course: ${data.course || 'N/A'}`,
+          `Scholarship Type: ${data.scholarshipType || 'N/A'}`,
+          `Bio Data: ${data.bioData || 'N/A'}`,
+          '',
+          'Self Description:',
+          `${data.selfDescription || 'N/A'}`
+        ].join('\r\n');
+      }
+
+      // Validate using HTML5 first; provide friendly feedback
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+
+        // Trigger native validation UI
+        if(!form.checkValidity()){
+          form.reportValidity();
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
+
+        const data = collectData();
+        const summary = composeSummary(data);
+
+        // Show summary in the form
+        summaryDiv.style.display = 'block';
+        summaryDiv.textContent = summary;
+        summaryActions.style.display = 'flex';
+
+        // Prepare mailto link
+        const mailToAddress = 'mkfoundation8@gmail.com';
+        const subject = encodeURIComponent('Scholarship Application — ' + (data.name || 'Applicant'));
+        // Use CRLF for better compatibility in mail clients
+        const body = encodeURIComponent(summary);
+        const mailto = `mailto:${mailToAddress}?subject=${subject}&body=${body}`;
+
+        // Try to open the user's mail client. Use window.open to avoid replacing the current page in some browsers.
+        try {
+          window.open(mailto, '_self');
+        } catch (err) {
+          try { window.open(mailto, '_blank'); } catch(e){}
+        }
+
+        // Give a visible confirmation, but do not immediately clear the user's data so they can review.
+        successMessage.style.display = 'inline-block';
+
+        // Restore submit button
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+        }, 1400);
+      });
+
+      // Copy summary to clipboard
+      copyBtn.addEventListener('click', async function(){
+        const txt = summaryDiv.textContent || '';
+        if(!txt) return;
+        try {
+          await navigator.clipboard.writeText(txt);
+          copyBtn.textContent = 'Copied!';
+          setTimeout(()=> copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Summary', 1500);
+        } catch (err) {
+          copyBtn.textContent = 'Copy failed';
+          setTimeout(()=> copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy Summary', 1500);
+        }
+      });
+
+      // Open summary in a new window/tab for printing / saving
+      openBtn.addEventListener('click', function(){
+        const content = summaryDiv.textContent || '';
+        const popup = window.open('', '_blank', 'noopener');
+        if(!popup) {
+          alert('Unable to open new window. Please allow popups for this site.');
+          return;
+        }
+        popup.document.write('<pre style="font-family:monospace; white-space:pre-wrap; font-size:14px;">' + 
+          content.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</pre>');
+        popup.document.title = 'Application Summary';
+      });
+
+      // Reset hides summary and messages
+      form.addEventListener('reset', function(){
+        setTimeout(() => { // small timeout to allow native reset to finish
+          summaryDiv.style.display = 'none';
+          summaryDiv.textContent = '';
+          summaryActions.style.display = 'none';
+          successMessage.style.display = 'none';
+        }, 50);
+      });
+
+      // Improve accessibility: clicking the logo should announce it's going to open in new tab
+      const logo = document.getElementById('ugandaCoat');
+      if(logo){
+        logo.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); logo.parentElement.click(); }
+        });
+      }
+    })();
+  </script>
+</body>
 </html>
