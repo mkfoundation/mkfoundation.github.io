@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -321,18 +321,13 @@
     .btn:active{ transform: translateY(1px) }
     .btn.small{ padding:8px 12px; font-weight:600; border-radius:8px; }
 
-    .success-message {
-      background: #e2ffe2;
-      color: #216b2a;
-      border: 1px solid #cfe9cf;
-      padding: 10px 14px;
-      margin-top: 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      display:inline-block;
-    }
+    .status-box { margin-top:12px; padding:12px; border-radius:8px; background:#fff8e6; border:1px solid #f3dfb0; color:#333; font-weight:700; display:inline-block; }
+    .status-pending { background:#fff4f6; border-color:#f7cfcf; color:#a33; }
+    .status-received { background:#eef9f1; border-color:#cfe7d1; color:#10683b; }
+    .status-read { background:#e7f2ff; border-color:#c7ddff; color:#084; }
 
-    /* Footer space */
+    .success-message { background: #e2ffe2; color: #216b2a; border: 1px solid #cfe9cf; padding: 10px 14px; margin-top: 12px; border-radius: 8px; font-weight: 700; display:inline-block; }
+
     .spacer { height: 60px; }
 
     @media (max-width: 820px) {
@@ -375,8 +370,6 @@
   <!-- Logo & Republic Title -->
   <div class="logo-section" role="region" aria-label="Uganda Emblem and Title">
     <div class="logo-wrap">
-      <!-- Local image in ./img/ named "1" (recommended extension: .png or .jpg). 
-           We use img/1.png by default and provide a fallback to the online SVG if the local file is missing. -->
       <a href="https://en.wikipedia.org/wiki/Coat_of_arms_of_Uganda" target="_blank" rel="noopener" title="Coat of arms of Uganda - online">
         <img
           src="img/1.png"
@@ -395,11 +388,43 @@
     </div>
   </div>
 
-  <!-- Social media sidebar -->
+  <!-- Social media sidebar
+       Official social accounts were unavailable; icons now link to the Ministry of Education & Sports official site.
+       If you have the real Facebook/Twitter/Instagram URLs, provide them and I'll set those instead.
+  -->
   <div class="social-sidebar" aria-hidden="false" aria-label="Social media links">
-    <a href="#" class="social facebook" title="Facebook (opens new tab)" aria-label="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
-    <a href="#" class="social twitter" title="Twitter (opens new tab)" aria-label="Twitter" target="_blank"><i class="fab fa-twitter"></i></a>
-    <a href="#" class="social instagram" title="Instagram (opens new tab)" aria-label="Instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a
+      href="https://www.education.go.ug/"
+      class="social facebook"
+      title="Ministry of Education and Sports Uganda website (opens in new tab)"
+      aria-label="Ministry of Education and Sports Uganda website"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i class="fab fa-facebook-f"></i>
+    </a>
+
+    <a
+      href="https://www.education.go.ug/"
+      class="social twitter"
+      title="Ministry of Education and Sports Uganda website (opens in new tab)"
+      aria-label="Ministry of Education and Sports Uganda website"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i class="fab fa-twitter"></i>
+    </a>
+
+    <a
+      href="https://www.education.go.ug/"
+      class="social instagram"
+      title="Ministry of Education and Sports Uganda website (opens in new tab)"
+      aria-label="Ministry of Education and Sports Uganda website"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i class="fab fa-instagram"></i>
+    </a>
   </div>
 
   <!-- Breadcrumbs -->
@@ -416,7 +441,7 @@
   <!-- Scholarship Application Form -->
   <section class="form-section" aria-labelledby="formTitle">
     <h2 id="formTitle">Scholarship Application Form</h2>
-    <div class="intro">Please complete the form below carefully. When you submit, your details will be composed into an email draft addressed to the scholarships office. You can review and send from your email client.</div>
+    <div class="intro">Please complete the form below carefully. When you submit, your details will be composed into an email draft addressed to the scholarships office. You will also receive a secret 4-digit code (a permutation of 6,7,8,9) — keep it safe. Use that code to check application status below.</div>
 
     <form id="scholarshipForm" autocomplete="on" novalidate>
       <div class="row">
@@ -515,7 +540,25 @@
       <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
         <button type="submit" class="btn" id="submitBtn"><i class="fas fa-paper-plane"></i> Submit Application</button>
         <button type="reset" class="btn secondary" id="resetBtn"><i class="fas fa-undo"></i> Reset</button>
-        <div id="successMessage" class="success-message" style="display:none;">Your application has been prepared in your mail client.</div>
+        <div id="successMessage" class="success-message" style="display:none;"></div>
+      </div>
+
+      <!-- Secret code display (after submit) -->
+      <div id="secretCodeBox" style="display:none; margin-top:12px;">
+        <div class="status-box" id="secretCodeText" aria-live="polite"></div>
+        <div style="margin-top:8px; color:#444; font-size:0.95rem;">Keep this code safe: use it below to check your application's status.</div>
+      </div>
+
+      <!-- Status check: enter secret code to check status -->
+      <hr style="margin-top:18px; border:none; border-top:1px solid #eef4f4;">
+      <div style="margin-top:12px;">
+        <label for="secretCodeCheck">Enter secret code to check application status</label>
+        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
+          <input id="secretCodeCheck" name="secretCodeCheck" type="text" placeholder="e.g. 0000" pattern="^[6-9]{4}$" inputmode="numeric" style="max-width:180px; padding:10px 12px; border-radius:8px; border:1px solid var(--muted);">
+          <button type="button" class="btn small" id="checkStatusBtn"><i class="fas fa-search"></i> Check Status</button>
+          <button type="button" class="btn small secondary" id="clearStatusBtn"><i class="fas fa-times"></i> Clear</button>
+        </div>
+        <div id="statusResult" style="margin-top:10px;"></div>
       </div>
     </form>
   </section>
@@ -524,6 +567,53 @@
 
   <script>
     (function(){
+      // Utilities
+      function shuffleArray(arr){
+        const a = arr.slice();
+        for(let i = a.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+      function generateSecretCode(){
+        // permutation of digits 6,7,8,9 (4-digit)
+        return shuffleArray(['6','7','8','9']).join('');
+      }
+      function nowISO(){ return new Date().toISOString(); }
+      function parseISO(s){ return new Date(s); }
+      function daysBetween(dateA, dateB){
+        const diff = Math.abs(dateB - dateA);
+        return diff / (1000 * 60 * 60 * 24);
+      }
+
+      // localStorage key for storing simple app records
+      const STORAGE_KEY = 'scholarship_applications_v1';
+
+      function loadApplications(){
+        try{
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : {};
+        }catch(e){
+          return {};
+        }
+      }
+      function saveApplications(obj){
+        try{
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+        }catch(e){}
+      }
+      function storeApplication(code, meta){
+        const apps = loadApplications();
+        apps[code] = meta;
+        saveApplications(apps);
+      }
+      function lookupApplication(code){
+        const apps = loadApplications();
+        return apps[code] || null;
+      }
+
+      // Form handling (existing)
       const form = document.getElementById('scholarshipForm');
       const summaryDiv = document.getElementById('formSummary');
       const successMessage = document.getElementById('successMessage');
@@ -531,6 +621,8 @@
       const copyBtn = document.getElementById('copySummary');
       const openBtn = document.getElementById('openSummary');
       const submitBtn = document.getElementById('submitBtn');
+      const secretCodeBox = document.getElementById('secretCodeBox');
+      const secretCodeText = document.getElementById('secretCodeText');
 
       function collectData() {
         const data = {};
@@ -572,11 +664,9 @@
         ].join('\r\n');
       }
 
-      // Validate using HTML5 first; provide friendly feedback
       form.addEventListener('submit', function(e){
         e.preventDefault();
 
-        // Trigger native validation UI
         if(!form.checkValidity()){
           form.reportValidity();
           return;
@@ -588,36 +678,48 @@
         const data = collectData();
         const summary = composeSummary(data);
 
-        // Show summary in the form
+        // Show summary
         summaryDiv.style.display = 'block';
         summaryDiv.textContent = summary;
         summaryActions.style.display = 'flex';
 
-        // Prepare mailto link
+        // Generate secret code (permutation of 6,7,8,9)
+        const code = generateSecretCode();
+
+        // Store application meta locally: timestamp and brief info (no PII ideally, but we store name+email for reference)
+        const meta = {
+          created_at: nowISO(),
+          name: data.name || '',
+          email: data.email || ''
+        };
+        storeApplication(code, meta);
+
+        // Display secret code to user
+        secretCodeBox.style.display = 'block';
+        secretCodeText.textContent = `Your secret code: ${code}`;
+
+        // Prepare mailto
         const mailToAddress = 'mkfoundation8@gmail.com';
         const subject = encodeURIComponent('Scholarship Application — ' + (data.name || 'Applicant'));
-        // Use CRLF for better compatibility in mail clients
-        const body = encodeURIComponent(summary);
+        const bodyText = summary + '\r\n\r\n' + `Secret code: ${code}`;
+        const body = encodeURIComponent(bodyText);
         const mailto = `mailto:${mailToAddress}?subject=${subject}&body=${body}`;
 
-        // Try to open the user's mail client. Use window.open to avoid replacing the current page in some browsers.
         try {
           window.open(mailto, '_self');
         } catch (err) {
           try { window.open(mailto, '_blank'); } catch(e){}
         }
 
-        // Give a visible confirmation, but do not immediately clear the user's data so they can review.
         successMessage.style.display = 'inline-block';
+        successMessage.textContent = 'Your application has been prepared in your mail client. Your secret code is shown below.';
 
-        // Restore submit button
         setTimeout(() => {
           submitBtn.disabled = false;
           submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
-        }, 1400);
+        }, 1200);
       });
 
-      // Copy summary to clipboard
       copyBtn.addEventListener('click', async function(){
         const txt = summaryDiv.textContent || '';
         if(!txt) return;
@@ -631,7 +733,6 @@
         }
       });
 
-      // Open summary in a new window/tab for printing / saving
       openBtn.addEventListener('click', function(){
         const content = summaryDiv.textContent || '';
         const popup = window.open('', '_blank', 'noopener');
@@ -644,17 +745,116 @@
         popup.document.title = 'Application Summary';
       });
 
-      // Reset hides summary and messages
       form.addEventListener('reset', function(){
-        setTimeout(() => { // small timeout to allow native reset to finish
+        setTimeout(() => {
           summaryDiv.style.display = 'none';
           summaryDiv.textContent = '';
           summaryActions.style.display = 'none';
           successMessage.style.display = 'none';
+          secretCodeBox.style.display = 'none';
+          secretCodeText.textContent = '';
         }, 50);
       });
 
-      // Improve accessibility: clicking the logo should announce it's going to open in new tab
+      // Status checking functionality
+      const checkStatusBtn = document.getElementById('checkStatusBtn');
+      const clearStatusBtn = document.getElementById('clearStatusBtn');
+      const secretCodeCheck = document.getElementById('secretCodeCheck');
+      const statusResult = document.getElementById('statusResult');
+
+      function isValidSecretFormat(s){
+        return typeof s === 'string' && /^[6-9]{4}$/.test(s);
+      }
+
+      function renderStatusMessage(message, klass){
+        statusResult.innerHTML = '';
+        const div = document.createElement('div');
+        div.className = 'status-box';
+        if(klass) div.classList.add(klass);
+        div.textContent = message;
+        statusResult.appendChild(div);
+      }
+
+      checkStatusBtn.addEventListener('click', function(){
+        const code = (secretCodeCheck.value || '').trim();
+
+        if(!code){
+          renderStatusMessage('Please enter your 4-digit secret code (permutation of 6,7,8,9).', '');
+          return;
+        }
+        if(!isValidSecretFormat(code)){
+          renderStatusMessage('Invalid code.Check email for your secrete code.', '');
+          return;
+        }
+
+        const record = lookupApplication(code);
+
+        // If a stored record exists, determine status by age.
+        if(record){
+          const createdAt = parseISO(record.created_at);
+          const ageDays = daysBetween(createdAt, new Date());
+
+          // Status rules:
+          // <= 1 day (<=24 hours): pending
+          // >1 day and <=3 days: application received
+          // >3 days: application read - check email for instructions
+          if(ageDays <= 1){
+            renderStatusMessage('Your application is pending.', 'status-pending');
+          } else if(ageDays <= 3){
+            renderStatusMessage('Application received.', 'status-received');
+          } else {
+            renderStatusMessage('Application read — please check your email for instructions. Thank you for being patient.', 'status-read');
+          }
+
+          const metaNote = document.createElement('div');
+          metaNote.style.marginTop = '8px';
+          metaNote.style.fontSize = '0.92rem';
+          metaNote.style.color = '#444';
+          metaNote.textContent = `Submitted: ${new Date(record.created_at).toLocaleString()} • Applicant: ${record.name || 'N/A'}`;
+          statusResult.appendChild(metaNote);
+          return;
+        }
+
+        // If no stored record but code is a valid permutation (format-match),
+        // do NOT show "No application found". Instead, choose the response from instructions above.
+        // We default unknown-but-valid codes to "Your application is pending."
+        renderStatusMessage('Your application is pending.', 'status-pending');
+
+        const metaNote = document.createElement('div');
+        metaNote.style.marginTop = '8px';
+        metaNote.style.fontSize = '0.92rem';
+        metaNote.style.color = '#444';
+        metaNote.textContent = "The aplication codes are sent via email. For more info/ instructions, send us a message on our email";
+        statusResult.appendChild(metaNote);
+      });
+
+      clearStatusBtn.addEventListener('click', function(){
+        secretCodeCheck.value = '';
+        statusResult.innerHTML = '';
+      });
+
+      // Accessibility: allow Enter key on status input to trigger check
+      secretCodeCheck.addEventListener('keypress', function(e){
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          checkStatusBtn.click();
+        }
+      });
+
+      // Attempt to prefill status if code in URL hash e.g. #code=6789
+      (function prefillFromHash(){
+        try{
+          const h = location.hash || '';
+          const m = h.match(/code=([6-9]{4})/);
+          if(m){
+            secretCodeCheck.value = m[1];
+            // optionally auto-check:
+            // checkStatusBtn.click();
+          }
+        }catch(e){}
+      })();
+
+      // Improve accessibility for logo link
       const logo = document.getElementById('ugandaCoat');
       if(logo){
         logo.addEventListener('keydown', (e) => {
