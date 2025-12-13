@@ -1,0 +1,621 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Feed my Snake</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#07111a; --panel:#0d1a22; --card:#0b1520; --accent:#29a3ff; --muted:#8fa2ad;
+      --btn:#2b8ef6; --danger:#ff5c5c;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Roboto,Arial,sans-serif;background:var(--bg);color:#e6f0f6;display:flex;flex-direction:column;min-height:100vh}
+    header{padding:12px 16px;background:linear-gradient(90deg,#021018,#07111a);display:flex;align-items:center;gap:12px}
+    header h1{font-size:16px;margin:0}
+    main{flex:1;display:flex;flex-wrap:wrap;gap:12px;padding:12px}
+    .panel{background:linear-gradient(180deg,var(--panel),#021218);border:1px solid rgba(255,255,255,0.03);padding:12px;border-radius:10px}
+    .col{flex:1 1 320px;min-width:280px}
+    .small{font-size:13px;color:var(--muted)}
+    input,select{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#07131a;color:#dff2ff;width:100%}
+    button{padding:8px 10px;border-radius:8px;border:0;background:var(--btn);color:#fff;cursor:pointer}
+    .muted{color:var(--muted)}
+    .grid{display:flex;flex-wrap:wrap;gap:8px}
+    #game-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+    canvas{border-radius:6px;background:linear-gradient(180deg,#031217,#021018);box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+    .dir-btn{width:56px;height:56px;border-radius:10px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-weight:600;color:#eaf6ff;border:1px solid rgba(255,255,255,0.02)}
+    .tog{display:inline-flex;align-items:center;gap:8px}
+    footer{padding:10px;text-align:center;color:var(--muted);font-size:13px}
+    .row{display:flex;gap:8px;align-items:center}
+    .top-actions{margin-left:auto;display:flex;gap:8px}
+    @media (max-width:860px){
+      main{padding:10px}
+      .col{flex-basis:100%}
+      .dir-btn{width:64px;height:64px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Feed my Snake</h1>
+    <div class="top-actions" id="top-actions"></div>
+  </header>
+
+  <main>
+    <section class="col panel" style="max-width:420px">
+      <h3>Account (local)</h3>
+      <div id="auth-forms" style="display:block">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input id="reg-u" placeholder="username" />
+          <input id="reg-p" placeholder="password" type="password" />
+          <button id="btn-reg">Register</button>
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="login-u" placeholder="username" />
+          <input id="login-p" placeholder="password" type="password" />
+          <button id="btn-login">Login</button>
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="row">
+          <div id="who" class="small">Not signed in</div>
+          <button id="btn-logout" style="display:none;background:#666;margin-left:auto">Logout</button>
+        </div>
+
+        <div style="margin-top:10px" class="muted small">
+          Your accounts and high score are stored in localStorage under "acct_txt". Export/import available.
+        </div>
+
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <button id="btn-export" style="background:#444">Export acct_txt</button>
+          <input id="import-file" type="file" accept=".json" style="display:none" />
+          <button id="btn-import" style="background:#444">Import acct_txt</button>
+        </div>
+
+      </div>
+
+      <hr style="border-color:rgba(255,255,255,0.03);margin:12px 0" />
+
+      <h4>Controls (mobile)</h4>
+      <p class="small muted">Use on-screen buttons or swipe. Keyboard: arrow keys / WASD.</p>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <button id="btn-touch-toggle" class="btn">Toggle Touch Controls</button>
+        <label class="tog" style="margin-left:auto">
+          <input type="checkbox" id="sound-toggle" style="accent-color:var(--btn)"/> Enable sounds
+        </label>
+      </div>
+
+      <div style="margin-top:12px" id="share-row">
+        <button id="share-btn" style="background:var(--accent)">Share Game</button>
+      </div>
+      <div style="margin-top:12px" id="">
+        <button id="share-btn" style="background:var(--accent)">Game by: mderrick</button>
+      </div>
+      <div style="margin-top:12px">
+        <div class="dev-box">
+          <div class="dev-img"><img src="dev.png" alt="dev"></div>
+          <div>
+            <div style="font-weight:700">Mderrick</div>
+            <div class="small">+256751987885</div>
+            <div style="margin-top:6px"><a href="https://wa.me/256751987885" target="_blank" rel="noopener" style="color:#1dd741;text-decoration:none">💬 WhatsApp</a></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    </section>
+
+    <section class="col panel" id="play-panel">
+      <div id="game-wrap">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div><strong>Snake</strong></div>
+          <div id="score" class="small muted" style="margin-left:12px">Score: 0</div>
+          <div id="best" class="small muted" style="margin-left:12px">Best: 0</div>
+          <div style="margin-left:auto" class="row">
+            <button id="btn-start" class="btn">Start</button>
+            <button id="btn-restart" class="btn" style="background:var(--danger);margin-left:6px">Restart</button>
+          </div>
+        </div>
+        <canvas id="canvas" width="720" height="540"></canvas>
+
+        <!-- on-screen controls area (visibility controlled) -->
+        <div id="touch-controls" style="display:none;margin-top:8px">
+          <div style="display:flex;gap:8px;justify-content:center;align-items:center">
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:center">
+              <div class="dir-btn" id="btn-up">▲</div>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <div class="dir-btn" id="btn-left">◀</div>
+                <div class="dir-btn" id="btn-down">▼</div>
+                <div class="dir-btn" id="btn-right">▶</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="col panel">
+      <h3 class="small">How it works</h3>
+      <ul class="small muted">
+        <li>Eat food to grow. Hitting wall or yourself ends the game.</li>
+        <li>Game speed slightly increases as you eat more.</li>
+        <li>Sound effects use WebAudio; toggle on/off.</li>
+        <li>Touch controls for Android/iOS available via the toggle.</li>
+      </ul>
+      <div style="margin-top:12px">
+        <h4 class="small">Saved data</h4>
+        <pre id="acct-view" style="background:#051018;padding:8px;border-radius:6px;overflow:auto;max-height:220px;font-size:12px"></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>Controls: Arrow keys / WASD. On mobile use the on-screen buttons or swipe. Share uses Web Share API when available.</footer>
+
+<script>
+/*
+Single-file Snake game with:
+- Accounts stored in localStorage key "acct_txt" (array of users)
+- Client-side SHA-256 password hashing via crypto.subtle
+- Sounds via WebAudio (toggle on/off)
+- On-screen touch buttons & swipe support
+- Share button (navigator.share or copy fallback)
+- Saves best score per user: acct.progress.snake.highscore
+*/
+
+// CONFIG
+const STORAGE_KEY = 'acct_txt';
+const GAME_KEY = 'snake';
+const CANVAS = document.getElementById('canvas');
+const CTX = CANVAS.getContext('2d');
+let CELL_SIZE = 20;      // will adapt to canvas size
+let COLS = Math.floor(CANVAS.width / CELL_SIZE);
+let ROWS = Math.floor(CANVAS.height / CELL_SIZE);
+
+// Helpers for account storage
+function loadStore(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch(e){ return [] } }
+function saveStore(s){ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)) }
+function findUser(username){ const a = loadStore(); return a.find(u => u.username.toLowerCase() === username.toLowerCase()) }
+async function hashPass(p){ const enc = new TextEncoder().encode(p); const h = await crypto.subtle.digest('SHA-256', enc); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('') }
+
+// UI refs
+const whoEl = document.getElementById('who');
+const scoreEl = document.getElementById('score');
+const bestEl = document.getElementById('best');
+const acctView = document.getElementById('acct-view');
+const soundToggle = document.getElementById('sound-toggle');
+const touchControls = document.getElementById('touch-controls');
+
+let currentUser = null;
+
+// initialize UI / auth
+function refreshWho(){
+  if(currentUser){ whoEl.innerHTML = `Signed in: <strong>${escapeHtml(currentUser.username)}</strong>`; document.getElementById('btn-logout').style.display='inline-block'; document.getElementById('auth-forms').style.display='none'; }
+  else{ whoEl.textContent = 'Not signed in'; document.getElementById('btn-logout').style.display='none'; document.getElementById('auth-forms').style.display='block'; }
+  updateBestDisplay();
+  renderAcctView();
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
+
+// wire auth buttons
+document.getElementById('btn-reg').addEventListener('click', async () => {
+  const u = document.getElementById('reg-u').value.trim();
+  const p = document.getElementById('reg-p').value;
+  if(!u || !p) return alert('username & password required');
+  const store = loadStore();
+  if(store.some(x=>x.username.toLowerCase()===u.toLowerCase())) return alert('username taken');
+  const hash = await hashPass(p);
+  store.push({ username: u, passHash: hash, progress: {} });
+  saveStore(store);
+  currentUser = { username: u };
+  refreshWho();
+  alert('Registered and signed in: ' + u);
+});
+
+document.getElementById('btn-login').addEventListener('click', async () => {
+  const u = document.getElementById('login-u').value.trim();
+  const p = document.getElementById('login-p').value;
+  if(!u || !p) return alert('username & password required');
+  const user = findUser(u);
+  if(!user) return alert('user not found');
+  const hash = await hashPass(p);
+  if(hash !== user.passHash) return alert('invalid credentials');
+  currentUser = { username: user.username };
+  refreshWho();
+  alert('Signed in as ' + user.username);
+});
+
+document.getElementById('btn-logout').addEventListener('click', () => {
+  currentUser = null;
+  refreshWho();
+});
+
+// export / import
+document.getElementById('btn-export').addEventListener('click', () => {
+  const data = localStorage.getItem(STORAGE_KEY) || '[]';
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'acct.txt'; a.click(); URL.revokeObjectURL(url);
+});
+document.getElementById('btn-import').addEventListener('click', ()=> document.getElementById('import-file').click());
+document.getElementById('import-file').addEventListener('change', (ev)=>{
+  const f = ev.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      const parsed = JSON.parse(r.result);
+      if(!Array.isArray(parsed)) throw new Error('invalid format');
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      alert('Imported acct_txt');
+      renderAcctView();
+    } catch(e){ alert('Import failed: ' + e.message) }
+  };
+  r.readAsText(f);
+});
+
+// share
+document.getElementById('share-btn').addEventListener('click', async ()=>{
+  const shareText = 'Play Snake — try to beat my score!';
+  const shareUrl = location.href;
+  if(navigator.share){
+    try{ await navigator.share({ title:'Snake', text:shareText, url:shareUrl }); }
+    catch(e){ alert('Share cancelled') }
+  } else {
+    // fallback copy to clipboard
+    try{
+      await navigator.clipboard.writeText(shareText + ' ' + shareUrl);
+      alert('Link copied to clipboard. Share it!');
+    } catch(e){ prompt('Copy this URL:', shareUrl) }
+  }
+});
+
+// touch controls toggle
+let touchEnabled = false;
+document.getElementById('btn-touch-toggle').addEventListener('click', ()=> {
+  touchEnabled = !touchEnabled;
+  touchControls.style.display = touchEnabled ? 'block' : 'none';
+});
+
+// sound toggle persisted
+soundToggle.checked = localStorage.getItem('snake_sound_on') !== 'false'; // default true
+soundToggle.addEventListener('change', ()=> localStorage.setItem('snake_sound_on', soundToggle.checked ? 'true' : 'false'));
+
+// show acct view
+function renderAcctView(){
+  const store = loadStore();
+  acctView.textContent = JSON.stringify(store, null, 2);
+}
+
+// best score display
+function updateBestDisplay(){
+  let best = 0;
+  if(currentUser){
+    const user = findUser(currentUser.username);
+    best = user?.progress?.[GAME_KEY]?.highscore || 0;
+  } else {
+    const maybe = JSON.parse(localStorage.getItem('snake_guest_highscore') || '0');
+    best = maybe || 0;
+  }
+  bestEl.textContent = 'Best: ' + best;
+}
+
+// GAME IMPLEMENTATION
+let game = null;
+
+function adaptGrid(){
+  // adapt cell size to canvas size for reasonable cols/rows
+  const w = CANVAS.clientWidth || CANVAS.width;
+  const h = CANVAS.clientHeight || CANVAS.height;
+  // choose cell between 14 and 30 px
+  const targetSize = Math.max(14, Math.min(28, Math.floor(Math.min(w/36, h/26))));
+  CELL_SIZE = targetSize;
+  COLS = Math.floor(w / CELL_SIZE);
+  ROWS = Math.floor(h / CELL_SIZE);
+  // set actual canvas drawing size to match CSS size for crisp rendering
+  CANVAS.width = COLS * CELL_SIZE;
+  CANVAS.height = ROWS * CELL_SIZE;
+}
+adaptGrid();
+window.addEventListener('resize', ()=>{ adaptGrid(); if(game) game.draw(); });
+
+// Sound engine (WebAudio simple effects). Falls back to no-op when disabled.
+const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+function playBeep(freq=880, time=0.06, type='sine', gain=0.12){
+  if(!soundToggle.checked || !audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.value = gain;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + time);
+  o.stop(audioCtx.currentTime + time + 0.01);
+}
+function playEatSound(){ playBeep(1200, 0.07, 'square', 0.12); }
+function playCrashSound(){ playBeep(140, 0.18, 'sawtooth', 0.18); }
+
+// Game class
+class SnakeGame {
+  constructor(){
+    this.reset();
+    this.tickInterval = 120; // ms per move (lower is faster)
+    this.minInterval = 60;
+    this.loopHandle = null;
+    this.paused = true;
+    this.initControls();
+  }
+
+  reset(){
+    this.direction = { x: 1, y: 0 }; // right initially
+    this.nextDirection = { x: 1, y: 0 };
+    // start near center
+    const startX = Math.floor(COLS/2);
+    const startY = Math.floor(ROWS/2);
+    this.snake = [{x:startX, y:startY}, {x:startX-1, y:startY}, {x:startX-2, y:startY}];
+    this.spawnFood();
+    this.score = 0;
+    this.speedUps = 0;
+    this.alive = true;
+    this.lastMoveTime = performance.now();
+    this.updateScoreUI();
+    this.draw();
+  }
+
+  spawnFood(){
+    while(true){
+      const fx = Math.floor(Math.random()*COLS);
+      const fy = Math.floor(Math.random()*ROWS);
+      if(!this.snake.some(s => s.x === fx && s.y === fy)){
+        this.food = {x:fx, y:fy};
+        break;
+      }
+    }
+  }
+
+  setDirection(dx, dy){
+    // prevent reversing
+    if((dx === -this.direction.x && dy === -this.direction.y) || (dx === this.direction.x && dy === this.direction.y)) return;
+    this.nextDirection = { x: dx, y: dy };
+  }
+
+  initControls(){
+    // keyboard
+    window.addEventListener('keydown', (e)=> {
+      if(!this.alive && e.key === 'Enter') this.start();
+      if(e.key === ' '){ this.togglePause(); e.preventDefault(); return; } // space pause
+      const key = e.key.toLowerCase();
+      if(key === 'arrowup' || key === 'w') this.setDirection(0, -1);
+      if(key === 'arrowdown' || key === 's') this.setDirection(0, 1);
+      if(key === 'arrowleft' || key === 'a') this.setDirection(-1, 0);
+      if(key === 'arrowright' || key === 'd') this.setDirection(1, 0);
+    });
+
+    // touch buttons
+    const btnUp = document.getElementById('btn-up'), btnDown = document.getElementById('btn-down');
+    const btnLeft = document.getElementById('btn-left'), btnRight = document.getElementById('btn-right');
+    [[btnUp,0,-1],[btnDown,0,1],[btnLeft,-1,0],[btnRight,1,0]].forEach(([el,dx,dy])=>{
+      if(!el) return;
+      el.addEventListener('touchstart', (ev)=>{ ev.preventDefault(); this.setDirection(dx,dy); }, {passive:false});
+      el.addEventListener('mousedown', ()=> this.setDirection(dx,dy));
+    });
+
+    // swipe detection on canvas
+    let touchStart = null;
+    CANVAS.addEventListener('touchstart', (e)=>{
+      const t = e.touches[0];
+      touchStart = { x: t.clientX, y: t.clientY, time: performance.now() };
+    }, {passive:true});
+    CANVAS.addEventListener('touchend', (e)=>{
+      if(!touchStart) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStart.x, dy = t.clientY - touchStart.y;
+      const adx = Math.abs(dx), ady = Math.abs(dy);
+      if(Math.max(adx, ady) < 20) return;
+      if(adx > ady){
+        if(dx > 0) this.setDirection(1,0); else this.setDirection(-1,0);
+      } else {
+        if(dy > 0) this.setDirection(0,1); else this.setDirection(0,-1);
+      }
+      touchStart = null;
+    }, {passive:true});
+  }
+
+  start(){
+    if(!this.alive) this.reset();
+    this.paused = false;
+    this.lastMoveTime = performance.now();
+    this.scheduleLoop();
+  }
+
+  togglePause(){
+    this.paused = !this.paused;
+    if(!this.paused) this.scheduleLoop();
+  }
+
+  stopLoop(){
+    if(this.loopHandle) { clearTimeout(this.loopHandle); this.loopHandle = null; }
+  }
+
+  scheduleLoop(){
+    this.stopLoop();
+    const tick = async () => {
+      if(this.paused) return;
+      this.update();
+      if(this.alive) this.loopHandle = setTimeout(tick, this.tickInterval);
+    };
+    this.loopHandle = setTimeout(tick, this.tickInterval);
+  }
+
+  update(){
+    // move
+    this.direction = this.nextDirection;
+    const head = this.snake[0];
+    const nx = head.x + this.direction.x;
+    const ny = head.y + this.direction.y;
+    // collision with walls
+    if(nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS){
+      this.die();
+      return;
+    }
+    // collision with self
+    if(this.snake.some(seg => seg.x === nx && seg.y === ny)){
+      this.die();
+      return;
+    }
+    // move snake
+    this.snake.unshift({ x: nx, y: ny });
+    // eat?
+    if(nx === this.food.x && ny === this.food.y){
+      this.score++;
+      this.speedUps++;
+      playEatSound();
+      this.spawnFood();
+      // increase speed every few eats
+      if(this.speedUps % 3 === 0 && this.tickInterval > this.minInterval) this.tickInterval = Math.max(this.minInterval, this.tickInterval - 8);
+      this.updateScoreUI();
+    } else {
+      this.snake.pop();
+    }
+    // auto-save best when score increases beyond best
+    this.saveIfBest();
+    this.draw();
+  }
+
+  die(){
+    this.alive = false;
+    playCrashSound();
+    this.paused = true;
+    this.stopLoop();
+    this.saveBest();
+    this.draw();
+    setTimeout(()=>{ alert('Game over — score: ' + this.score); }, 80);
+  }
+
+  updateScoreUI(){
+    scoreEl.textContent = 'Score: ' + this.score;
+    updateBestDisplay();
+  }
+
+  saveIfBest(){
+    const best = this.getBest() || 0;
+    if(this.score > best) this.setBest(this.score);
+  }
+
+  getBest(){
+    if(currentUser){
+      const user = findUser(currentUser.username);
+      return user?.progress?.[GAME_KEY]?.highscore || 0;
+    } else {
+      return parseInt(localStorage.getItem('snake_guest_highscore') || '0', 10);
+    }
+  }
+
+  setBest(val){
+    if(currentUser){
+      const store = loadStore();
+      const user = store.find(u => u.username === currentUser.username);
+      if(!user.progress) user.progress = {};
+      if(!user.progress[GAME_KEY]) user.progress[GAME_KEY] = { highscore: 0 };
+      user.progress[GAME_KEY].highscore = val;
+      saveStore(store);
+    } else {
+      localStorage.setItem('snake_guest_highscore', '' + val);
+    }
+    updateBestDisplay();
+    renderAcctView();
+  }
+
+  saveBest(){
+    // ensure best stored once game over
+    this.saveIfBest();
+  }
+
+  draw(){
+    const ctx = CTX;
+    const w = CANVAS.width, h = CANVAS.height;
+    // background
+    ctx.fillStyle = '#021518';
+    ctx.fillRect(0,0,w,h);
+
+    // grid subtle
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    ctx.lineWidth = 1;
+    for(let x=0;x<=COLS;x++){
+      ctx.beginPath(); ctx.moveTo(x*CELL_SIZE,0); ctx.lineTo(x*CELL_SIZE,h); ctx.stroke();
+    }
+    for(let y=0;y<=ROWS;y++){
+      ctx.beginPath(); ctx.moveTo(0,y*CELL_SIZE); ctx.lineTo(w,y*CELL_SIZE); ctx.stroke();
+    }
+
+    // draw food
+    ctx.fillStyle = '#ffd86b';
+    this.drawCell(this.food.x, this.food.y, () => {
+      ctx.beginPath();
+      const cx = this.food.x*CELL_SIZE + CELL_SIZE/2, cy = this.food.y*CELL_SIZE + CELL_SIZE/2;
+      ctx.arc(cx, cy, CELL_SIZE*0.38, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#b07b2b'; ctx.lineWidth = 1; ctx.stroke();
+    });
+
+    // draw snake
+    for(let i=0;i<this.snake.length;i++){
+      const seg = this.snake[i];
+      const t = i===0 ? 1.0 : (1 - Math.min(0.8, i / Math.max(6, this.snake.length)));
+      const color = i===0 ? '#7be3ff' : '#67c8ff';
+      ctx.fillStyle = color;
+      const px = seg.x * CELL_SIZE, py = seg.y * CELL_SIZE;
+      ctx.fillRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+      // outline
+      ctx.strokeStyle = `rgba(0,0,0,${0.45})`; ctx.lineWidth = 1; ctx.strokeRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
+    }
+
+    // if dead overlay
+    if(!this.alive){
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = '#fff';
+      ctx.font = `${Math.max(18, CELL_SIZE)}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Game Over', w/2, h/2 - 10);
+      ctx.font = `${Math.max(12, CELL_SIZE/1.5)}px sans-serif`;
+      ctx.fillText(`Score: ${this.score}`, w/2, h/2 + 20);
+    }
+  }
+
+  drawCell(cx, cy, fn){
+    fn();
+  }
+
+} // end class
+
+// wire UI game controls
+const g = new SnakeGame();
+game = g;
+document.getElementById('btn-start').addEventListener('click', ()=> {
+  // resume audio context on user gesture
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  g.start();
+});
+document.getElementById('btn-restart').addEventListener('click', ()=> {
+  if(confirm('Restart game?')){ g.reset(); g.start(); }
+});
+
+// touch buttons mapping
+document.getElementById('btn-up').addEventListener('click', ()=> g.setDirection(0,-1));
+document.getElementById('btn-down').addEventListener('click', ()=> g.setDirection(0,1));
+document.getElementById('btn-left').addEventListener('click', ()=> g.setDirection(-1,0));
+document.getElementById('btn-right').addEventListener('click', ()=> g.setDirection(1,0));
+
+// initial UI state
+refreshWho();
+g.draw();
+
+// Save best on page unload
+window.addEventListener('beforeunload', ()=> {
+  if(game) game.saveBest();
+});
+
+</script>
+</body>
+</html>
